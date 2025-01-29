@@ -1,0 +1,20 @@
+{
+  "name": "umbraco-commerce-cart",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "author": {
+    "name": "Umbraco A/S",
+    "email": "dxp@umbraco.com",
+    "url": "https://umbraco.com"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc && vite build",
+    "watch": "vite build --watch"
+  },
+  "devDependencies": {
+    "typescript": "~5.6.2",
+    "vite": "^6.0.5"
+  }
+}

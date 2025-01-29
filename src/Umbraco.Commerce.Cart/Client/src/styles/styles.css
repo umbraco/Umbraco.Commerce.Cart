@@ -1,0 +1,84 @@
+.ucc-modal-container {
+    position: relative;
+}
+
+.ucc-modal-background {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.ucc-modal-container--open .ucc-modal-background {
+    display: block;
+}
+
+.ucc-modal {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 500px;
+    height: 100%;
+    flex-direction: column;
+    background-color: white;
+    transform: translateX(100%);
+    transition: transform 0.2s;
+}
+.ucc-modal-container--open .ucc-modal {
+    transform: translateX(0);
+}
+
+.ucc-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.ucc-modal-title {
+    margin: 0;
+}
+
+.ucc-modal-close {
+    cursor: pointer;
+}
+
+.ucc-modal-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.ucc-modal-footer {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+.ucc-cart-modal-totals {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.ucc-cart-modal-total {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.ucc-cart-modal-total--total {
+    font-weight: bold;
+}
+
+.ucc-cart-modal-checkout {
+    cursor: pointer;
+    display: block;
+    background-color: #4fd1c5;
+    padding: 5px 10px;
+    text-align: center;
+}

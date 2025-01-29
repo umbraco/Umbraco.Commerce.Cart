@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <StaticWebAssetBasePath>App_Plugins/UmbracoCommerceCart</StaticWebAssetBasePath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Client\umbraco-commerce-cart\package.json" />
+      <_ContentIncludedByDefault Remove="Client\umbraco-commerce-cart\tsconfig.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Umbraco.Commerce.Cms" Version="15.0.0" />
+    </ItemGroup>
+
+</Project>
