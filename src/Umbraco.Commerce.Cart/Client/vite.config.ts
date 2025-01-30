@@ -4,8 +4,9 @@ export default defineConfig({
     build: {
         lib: {
             entry: "src/index.ts",
-            formats: ["es"],
-            fileName: "umbraco-commerce-cart"
+            formats: ["iife"],
+            name: 'ucc',
+            fileName: (format) => `umbraco-commerce-cart.js`
         },
         outDir: '../wwwroot/',
         emptyOutDir: true,

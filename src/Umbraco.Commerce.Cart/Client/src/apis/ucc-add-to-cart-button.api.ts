@@ -1,7 +1,8 @@
 import { isEmpty } from "../utils.ts";
 import { MasterProductData } from "../types.ts";
-import { UcCartRepository } from "../repositories/cart.respository.ts";
+import { UccCartRepository } from "../repositories/cart.respository.ts";
 import { UCC_CART_CONTEXT } from "../contexts/ucc.context.ts";
+import { UccEvent } from "../events/ucc.event.ts";
 
 export class UccAddToCartButtonApi {
 
@@ -27,7 +28,7 @@ export class UccAddToCartButtonApi {
     
     private readonly _host: HTMLElement;
     private _productData:MasterProductData | null  = null;
-    private _cartRepository = new UcCartRepository();
+    private _cartRepository = new UccCartRepository();
     private _context = UCC_CART_CONTEXT;
     
     constructor(host: HTMLElement) {
@@ -42,7 +43,8 @@ export class UccAddToCartButtonApi {
             e.preventDefault();
             if (this._productData) {
                 await this._cartRepository.addToCart(this._context.config.get()!.store!, this._productData).then(() => {
-                    this._host.dispatchEvent(new CustomEvent('uc-cart-item-added', { bubbles: true, composed: true }));
+                    this._host.dispatchEvent(new UccEvent(UccEvent.CART_CHANGED));
+                    this._host.dispatchEvent(new UccEvent(UccEvent.CART_OPEN));
                 })
             }
         });
@@ -52,8 +54,8 @@ export class UccAddToCartButtonApi {
     {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
-                if (mutation.type === 'attributes' && mutation.attributeName?.startsWith('data-uc-')) {
-                    this._productData = this._processDataAttributes(UccAddToCartButtonApi._attrMap, 'data-uc-');
+                if (mutation.type === 'attributes' && mutation.attributeName?.startsWith('data-ucc-')) {
+                    this._productData = this._processDataAttributes(UccAddToCartButtonApi._attrMap, 'data-ucc-');
                 }
             });
         });

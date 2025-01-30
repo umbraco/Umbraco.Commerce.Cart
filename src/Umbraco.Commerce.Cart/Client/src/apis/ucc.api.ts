@@ -1,14 +1,17 @@
 import { processAddToCartButtons } from "../processors/ucc-add-to-cart-button.processor.ts";
-import { CartConfig } from "../types.ts";
+import { Cart, CartConfig } from "../types.ts";
 import { UCC_CART_CONTEXT } from "../contexts/ucc.context.ts";
 import { UccCartModalElement } from "../components/ucc-cart-modal.element.ts";
-import { UccCartUpdateEvent } from "../events/ucc-cart-update.event.ts";
+import { UccEvent } from "../events/ucc.event.ts";
+import { UccCartRepository } from "../repositories/cart.respository.ts";
+import {processCartButtons} from "../processors/ucc-cart-button.processor.ts";
+import {processCartCountLabels} from "../processors/ucc-cart-count-labels.processor.ts";
 
 export class UccApi {
     
     private readonly _host;
     private _context = UCC_CART_CONTEXT;
-    private _initialized = false;
+    private _cartRepository = new UccCartRepository();
     private _cartModal: UccCartModalElement;
     
     constructor(host: HTMLElement) {
@@ -18,14 +21,21 @@ export class UccApi {
         this._bindEvents();
     }
     
+    private _fetchCart = async () => {
+        return await this._cartRepository.getCart(this._context.config.get()!.store!).then(data => {
+            this._context.cart.set(data as Cart);
+        })
+    }
+    
     private _bindEvents = () => {
-        this._host.addEventListener('uc-cart-item-added', async () => {
-            // TODO: Check for an autoOpen config option
+        this._host.addEventListener(UccEvent.CART_OPEN, async () => {
             this.openCart();
         });
-        this._host.addEventListener(UccCartUpdateEvent.TYPE, async (e) => {
-            const evt = e as UccCartUpdateEvent;
-            this._context.cart.set(evt.cart);
+        this._host.addEventListener(UccEvent.CART_CLOSE, async () => {
+            this.closeCart();
+        });
+        this._host.addEventListener(UccEvent.CART_CHANGED, async () => {
+            await this._fetchCart();
         });
     }
     
@@ -40,42 +50,43 @@ export class UccApi {
         observer.observe(this._host.ownerDocument.documentElement, { attributes: true });
     }
     
-    public init = (config:Partial<CartConfig>) => {
+    public init = (config?:Partial<CartConfig>) => {
         
-        // Merge config with default values
-        const cfg = {
-            lang: 'en',
-            ...config
-        }
-        
-        // Ensure there is a default locale
-        if (!cfg.locales?.en) 
+        if (config) 
         {
-            cfg.locales = { 
-                en: {
-                    cart_title: 'Cart Summary',
-                    close_cart: 'Close Cart',
-                    checkout: 'Checkout',
-                    taxes: 'Taxes',
-                    shipping: 'Shipping',
-                    shipping_message: 'Calculated at Checkout',
-                    total: 'Total',
-                },
-                ...cfg.locales
+            // Merge config with default values
+            const cfg = {
+                lang: 'en',
+                ...config
             }
-        }
-        
-        // Set the config in context
-        this._context.config.set(cfg);
-        
-        // One time initialization
-        if (!this._initialized) {
-            // TODO: Ensure cart model is created
-            this._initialized = true;
+
+            // Ensure there is a default locale
+            if (!cfg.locales?.en) {
+                cfg.locales = {
+                    en: {
+                        cart_title: 'Cart Summary',
+                        close_cart: 'Close Cart',
+                        checkout: 'Checkout',
+                        taxes: 'Taxes',
+                        shipping: 'Shipping',
+                        shipping_message: 'Calculated at Checkout',
+                        total: 'Total',
+                    },
+                    ...cfg.locales
+                }
+            }
+
+            // Set the config in context
+            this._context.config.set(cfg);
+            
+            // Fetch the cart
+            this._fetchCart();
         }
 
         // Process UI elements
         processAddToCartButtons(this._host);
+        processCartButtons(this._host);
+        processCartCountLabels(this._host);
     }
     
     public setLang = (lang:string) => {

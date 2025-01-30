@@ -10,6 +10,12 @@ export type MasterProductData = ProductData & {
     bundleItems?: ProductData[]
 }
 
+export type AddToCartRequest = MasterProductData;
+export type UpdateCartItemRequest = {
+    quantity?: number
+    properties?: Record<string, string>
+}
+
 export type CartConfig = {
     store?: string
     checkoutUrl?: string
@@ -25,17 +31,20 @@ export type Cart = {
 
 export type CartItem = {
     id: string
-    sku: string
     productReference: string
     productVariantReference?: string
-    title: string
+    sku: string
+    name: string
+    imageUrl?: string
+    unitPrice: FormattedPrice
     quantity: number
-    price: FormattedPrice
+    total: FormattedPrice
     properties?: Record<string, string>
+    attributes?: Record<string, string>
 }
 
 export type FormattedPrice = {
-    value: string
+    withTax: string
     tax: string
     withoutTax: string
 }

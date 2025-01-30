@@ -3,6 +3,23 @@ export const isEmpty = (value: any) =>
     return (value == null || (typeof value === "string" && value.trim().length === 0));
 }
 
+export const delegate = (el:Element, selector:string, event:string, handler: Function) => {
+    el.addEventListener(event, e => {
+        const target = e.target as Element;
+        if (target.matches(selector) || target.closest(selector)) handler(e, el);
+    });
+}
+
+export const debounce = (callback: Function, wait: number) => {
+    let timeoutId : number | undefined = undefined;
+    return (...args : any[]) => {
+        window.clearTimeout(timeoutId);
+        timeoutId = window.setTimeout(() => {
+            callback.apply(null, args);
+        }, wait);
+    };
+}
+
 export type ReactiveValue<T> = {
     hasValue: () => boolean;
     get: () => T | null;

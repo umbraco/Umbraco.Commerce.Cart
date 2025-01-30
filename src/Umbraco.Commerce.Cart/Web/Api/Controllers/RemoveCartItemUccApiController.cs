@@ -12,17 +12,15 @@ namespace Umbraco.Commerce.Cart.Web.Api.Controllers;
 [ApiVersion("1.0")]
 [VersionedCartApiRoute("session")]
 [ApiExplorerSettings(GroupName = "Session")]
-public class AddToCartCartApiController(IUmbracoCommerceApi umbracoCommerceApi) : UmbracoCommerceCartApiControllerBase
+public class RemoveCartItemUccApiController(IUmbracoCommerceApi umbracoCommerceApi) : UccApiControllerBase
 {
-    private static readonly Dictionary<string, string> EMPTY_PROPERTIES = new();
-    
-    [HttpPost("cart")]
+    [HttpDelete("cart/{id:guid}")]
     [MapToApiVersion("1.0")]
     [ProducesResponseType(typeof(CartDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> AddToCart(
+    public async Task<IActionResult> RemoveCartItem(
         [FromRoute] StoreSessionDto session,
-        [FromBody] AddToCartRequestDto model,
+        [FromRoute] Guid id,
         CancellationToken token = default)
     {
         var store = Guid.TryParse(session.Store, out var storeId)
@@ -33,26 +31,9 @@ public class AddToCartCartApiController(IUmbracoCommerceApi umbracoCommerceApi) 
         {
             await umbracoCommerceApi.Uow.ExecuteAsync(async uow =>
             {
-                var order = await umbracoCommerceApi.GetOrCreateCurrentOrderAsync(store.Id)!
+                var order = await umbracoCommerceApi.GetCurrentOrderAsync(store.Id)!
                     .AsWritableAsync(uow)
-                    .AddProductAsync(
-                        model.ProductReference, 
-                        model.ProductVariantReference, 
-                        model.Quantity ?? 1,
-                        model.Properties ?? EMPTY_PROPERTIES,
-                        model.BundleReference);
-
-                if (model.BundleItems is { Count: > 0 })
-                {
-                    foreach (var bundleItem in model.BundleItems)
-                    {
-                        await order.AddProductToBundleAsync(
-                            model.BundleReference, 
-                            bundleItem.ProductReference, 
-                            bundleItem.Quantity ?? 1,
-                            bundleItem.Properties ?? EMPTY_PROPERTIES);
-                    }
-                }
+                    .RemoveOrderLineAsync(id);
                 
                 await umbracoCommerceApi.SaveOrderAsync(order, token);
                 

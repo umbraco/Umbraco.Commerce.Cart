@@ -3,6 +3,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Umbraco.Commerce.Cart.Web.Api.Attributes;
 using Umbraco.Commerce.Cart.Web.Api.Models;
+using Umbraco.Commerce.Cart.Web.Api.Models.Factories;
 using Umbraco.Commerce.Core.Api;
 
 namespace Umbraco.Commerce.Cart.Web.Api.Controllers;
@@ -10,10 +11,8 @@ namespace Umbraco.Commerce.Cart.Web.Api.Controllers;
 [ApiVersion("1.0")]
 [VersionedCartApiRoute("session")]
 [ApiExplorerSettings(GroupName = "Session")]
-public class GetCartCartApiController(IUmbracoCommerceApi umbracoCommerceApi) : UmbracoCommerceCartApiControllerBase
+public class GetCartUccApiController(IUmbracoCommerceApi umbracoCommerceApi, IServiceProvider serviceProvider) : UccApiControllerBase
 {
-    private static readonly Dictionary<string, string> EMPTY_PROPERTIES = new();
-    
     [HttpGet("cart")]
     [MapToApiVersion("1.0")]
     [ProducesResponseType(typeof(CartDto), StatusCodes.Status200OK)]
@@ -25,10 +24,15 @@ public class GetCartCartApiController(IUmbracoCommerceApi umbracoCommerceApi) : 
             ? await umbracoCommerceApi.GetStoreAsync(storeId)
             : await umbracoCommerceApi.GetStoreAsync(session.Store);
 
-        var order = umbracoCommerceApi.GetCurrentOrderAsync(store.Id);
+        var order = await umbracoCommerceApi.GetCurrentOrderAsync(store.Id);
+        if (order == null)
+        {
+            return Ok(null);
+        }
+
+        var ctx = new MappingContext(serviceProvider);
+        var dto = await CartModelFactory.EntityToDtoAsync(ctx, order);
         
-        // TODO: Map order to CartDto
-        
-        return Ok(null);
+        return Ok(dto);
     }
 }

@@ -35,11 +35,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
 }
 
 .ucc-modal-title {
+    font-size: 20px;
+    font-weight: 600;
     margin: 0;
 }
 
@@ -55,30 +57,119 @@
 .ucc-modal-footer {
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    border-top: 1px solid #ccc;
+    padding: 20px;
+    border-top: 1px solid #ddd;
 }
 
-.ucc-cart-modal-totals {
+.ucc-cart-item {
+    display: flex;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.ucc-cart-item__image {
+    margin-right: 20px;
+}
+
+.ucc-cart-item__image img {
+    width: 75px;
+    height: 75px;
+    max-width: none;
+    max-height: none;
+    object-fit: cover;
+    border: solid 1px #ddd;
+    border-radius: 5px;
+}
+
+.ucc-cart-item__body {
+    flex: 1;
+}
+
+.ucc-cart-item__title {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.2;
+    margin-bottom: 5px;
+}
+
+.ucc-cart-item__delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: #eee;
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.ucc-cart-item__delete:hover {
+    background-color: #ffc9c9;
+}
+
+.ucc-cart-item__foot {
+    margin-top: 20px;
+}
+
+.ucc-cart-item__quantity {
+    width: 75px;
+    padding: 5px;
+    text-align: left;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.ucc-cart-item__attribute {
+    font-size: 14px;
+    color: #666;
+}
+
+.ucc-cart-item__attribute-key:after {
+    content: ':';
+}
+
+.ucc-cart-item__attribute-value {
+    font-weight: 600;
+}
+
+.ucc-cart-item__price {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.ucc-cart-totals {
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
 }
 
-.ucc-cart-modal-total {
-    display: flex;
-    justify-content: space-between;
+.ucc-cart-total {
     margin-bottom: 5px;
 }
 
-.ucc-cart-modal-total--total {
+.ucc-cart-total--total {
     font-weight: bold;
 }
 
-.ucc-cart-modal-checkout {
+.ucc-cart-checkout {
     cursor: pointer;
     display: block;
+    font-weight: 600;
     background-color: #4fd1c5;
-    padding: 5px 10px;
+    padding: 10px 20px;
     text-align: center;
+    border-radius: 3px;
+}
+
+.ucc-split {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.ucc-split--center {
+    align-items: center;
 }

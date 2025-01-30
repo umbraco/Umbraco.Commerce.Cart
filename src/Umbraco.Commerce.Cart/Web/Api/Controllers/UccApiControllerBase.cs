@@ -5,7 +5,7 @@ namespace Umbraco.Commerce.Cart.Web.Api.Controllers;
 
 [ApiController]
 [MapToApi(Constants.ApiName)]
-public class UmbracoCommerceCartApiControllerBase : ControllerBase
+public class UccApiControllerBase : ControllerBase
 {
     
 }
