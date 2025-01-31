@@ -35,6 +35,7 @@
     
     --ucc-modal-width: 550px;
     --ucc-modal-background-color: #fff;
+    --ucc-modal-overlay-color: rgba(0, 0, 0, 0.5);
 }
 
 .ucc-modal-container {
@@ -48,7 +49,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--ucc-modal-overlay-color);
 }
 .ucc-modal-container--open .ucc-modal-background {
     display: block;
