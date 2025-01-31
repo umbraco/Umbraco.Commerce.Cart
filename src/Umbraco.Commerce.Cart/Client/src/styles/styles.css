@@ -4,7 +4,8 @@
     --ucc-primary-color: #155dfc;
     --ucc-primary-color-light: #51a2ff;
     --ucc-primary-color-dark: #193cb8;
-    --ucc-danger-color: #9f0712;
+    
+    --ucc-danger-text-color: #9f0712;
     --ucc-danger-background-color: #ffc9c9;
 
     /* Font */
@@ -32,7 +33,8 @@
     --ucc-button-background-color-disabled: #d1d5dc;
     --ucc-button-text-color-disabled: #fff;
     
-    --ucc-cart-width: 550px;
+    --ucc-modal-width: 550px;
+    --ucc-modal-background-color: #fff;
 }
 
 .ucc-modal-container {
@@ -60,7 +62,7 @@
     width: 100%;
     height: 100%;
     flex-direction: column;
-    background-color: white;
+    background-color: var(--ucc-modal-background-color);
     transform: translateX(100%);
     transition: transform 0.2s;
 }
@@ -70,7 +72,7 @@
 
 @media (min-width: 768px) {
     .ucc-modal {
-        width: var(--ucc-cart-width);
+        width: var(--ucc-modal-width);
         border-left: solid 1px var(--ucc-border-color);
     }
 }
@@ -104,6 +106,7 @@
 .ucc-modal-body {
     flex: 1;
     overflow-y: auto;
+    margin-bottom: -1px;
 }
 
 .ucc-modal-footer {
@@ -171,7 +174,7 @@
 }
 
 .ucc-cart-item__remove:hover {
-    color: var(--ucc-danger-color);
+    color: var(--ucc-danger-text-color);
     background-color: var(--ucc-danger-background-color);
 }
 
