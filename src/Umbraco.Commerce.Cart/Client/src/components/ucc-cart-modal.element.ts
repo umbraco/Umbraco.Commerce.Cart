@@ -1,5 +1,5 @@
 import { UCC_CART_CONTEXT } from "../contexts/ucc.context.ts";
-import { Cart, CartConfig, CartItem } from "../types.ts";
+import { CartConfig, CartItem } from "../types.ts";
 import { UccModalElement } from "./ucc-modal.element.ts";
 import { debounce, delegate } from "../utils.ts";
 import { UccCartRepository } from "../repositories/cart.respository.ts";
@@ -8,7 +8,7 @@ import { UccEvent } from "../events/ucc.event.ts";
 export class UccCartModalElement extends UccModalElement
 {
     private _context = UCC_CART_CONTEXT;
-    private _cartRepository = new UccCartRepository();
+    private _cartRepository: UccCartRepository;
     
     private get storeIdOrAlias() {
         return this._context.config.get()!.store!;
@@ -20,6 +20,7 @@ export class UccCartModalElement extends UccModalElement
     
     constructor(host: HTMLElement) {
         super(host);
+        this._cartRepository = new UccCartRepository(host);
         this._attachCartTemplate();
         this._observerContext();
     }
@@ -60,10 +61,9 @@ export class UccCartModalElement extends UccModalElement
     private _renderCart() 
     {
         const config = this._context.config.get();
-        const cart = this._context.cart.get();
+        if (!config) return;
         
-        if (!config || !cart) return;
-
+        const cart = this._context.cart.get();
         if (cart && cart.items.length > 0) {
             this._host.querySelector('.ucc-cart-items')!.innerHTML = cart.items.map((item) => {
                 const propsToDisplay = Object.keys(item.properties ?? {}).filter((x) => (config.properties ?? []).map(y => y.toLowerCase()).includes(x.toLowerCase()));
@@ -179,7 +179,7 @@ export class UccCartModalElement extends UccModalElement
                     <span class="ucc-cart-total-value ucc-split__right"></span>
                 </div>
             </div>
-            <div class="ucc-cart-message">Calculate shipping and apply discounts during checkout</div>
+            <div class="ucc-cart-message"></div>
             <a class="ucc-cart-checkout" href="#"></a>
         `)
         

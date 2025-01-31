@@ -1,6 +1,14 @@
 import { AddToCartRequest, UpdateCartItemRequest } from "../types.ts";
+import {UccEvent} from "../events/ucc.event.ts";
 
 export class UccCartRepository {
+
+    private _host: Element;
+    
+    constructor(host: Element) {
+        this._host = host;
+    }
+
 
     async getCart(storeIdOrAlias:string) {
         return await this._doRequest(storeIdOrAlias, '/umbraco/commerce/cart/api/v1/session/cart', 'GET');
@@ -27,18 +35,17 @@ export class UccCartRepository {
                 'Store': storeIdOrAlias
             },
             body: body ? JSON.stringify(body) : undefined
+        }).then(async response => {
+            return { ok: response.ok, data: await response.text() };
         }).then(response => {
             if (response.ok) {
-                return response.text();
+                return response.data ? JSON.parse(response.data) : undefined;
             } else {
-                console.log("Oops! There was a problem submitting your form");
-            }
-        }).then(data => {
-            if (data) {
-                return JSON.parse(data);
+                return Promise.reject(response.data);
             }
         }).catch(error => {
-            console.log(error)
+            this._host.dispatchEvent(new UccEvent(UccEvent.CART_ERROR, error));
+            return Promise.reject(error);
         });
     }
     

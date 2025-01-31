@@ -27,12 +27,13 @@ export class UccAddToCartButtonApi {
     ]
     
     private readonly _host: HTMLElement;
-    private _productData:MasterProductData | null  = null;
-    private _cartRepository = new UccCartRepository();
     private _context = UCC_CART_CONTEXT;
+    private _cartRepository:UccCartRepository;
+    private _productData:MasterProductData | null  = null;
     
     constructor(host: HTMLElement) {
         this._host = host;
+        this._cartRepository = new UccCartRepository(host);
         this._observeAttributes();
         this._bindEvents();
     }
@@ -42,7 +43,7 @@ export class UccAddToCartButtonApi {
         this._host.addEventListener('click', async (e) => {
             e.preventDefault();
             if (this._productData) {
-                await this._cartRepository.addToCart(this._context.config.get()!.store!, this._productData).then(() => {
+                this._cartRepository.addToCart(this._context.config.get()!.store!, this._productData).then(() => {
                     this._host.dispatchEvent(new UccEvent(UccEvent.CART_CHANGED));
                     this._host.dispatchEvent(new UccEvent(UccEvent.CART_OPEN));
                 })
@@ -52,15 +53,21 @@ export class UccAddToCartButtonApi {
     
     private _observeAttributes = () => 
     {
+        const processAttributes = () => {
+            this._productData = this._processDataAttributes(UccAddToCartButtonApi._attrMap, 'data-ucc-');
+        }
+        
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.type === 'attributes' && mutation.attributeName?.startsWith('data-ucc-')) {
-                    this._productData = this._processDataAttributes(UccAddToCartButtonApi._attrMap, 'data-ucc-');
+                    processAttributes();
                 }
             });
         });
         
         observer.observe(this._host, { attributes: true });
+
+        processAttributes();
     }
     
     private _processDataAttributes = (attrMap:any, outerAttrKey: string | undefined = undefined) =>

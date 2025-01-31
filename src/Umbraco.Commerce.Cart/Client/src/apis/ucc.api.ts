@@ -1,18 +1,18 @@
 import { processAddToCartButtons } from "../processors/ucc-add-to-cart-button.processor.ts";
-import {Cart, CartConfig, CartOptions} from "../types.ts";
+import { Cart, CartConfig } from "../types.ts";
 import { UCC_CART_CONTEXT } from "../contexts/ucc.context.ts";
 import { UccCartModalElement } from "../components/ucc-cart-modal.element.ts";
 import { UccEvent } from "../events/ucc.event.ts";
 import { UccCartRepository } from "../repositories/cart.respository.ts";
-import {processCartButtons} from "../processors/ucc-cart-button.processor.ts";
-import {processCartCountLabels} from "../processors/ucc-cart-count-labels.processor.ts";
+import { processCartButtons } from "../processors/ucc-cart-button.processor.ts";
+import { processCartCountLabels } from "../processors/ucc-cart-count-labels.processor.ts";
 
 export class UccApi {
     
     public readonly defaultLocales : Record<string, Record<string, string>> = {
         en: {
             cart_title: 'Cart Summary',
-            close_cart: 'Close Cart',
+            close_cart: 'Close Cart (ESC)',
             checkout: 'Checkout',
             taxes: 'Taxes',
             subtotal: 'Subtotal',
@@ -25,11 +25,12 @@ export class UccApi {
     
     private readonly _host;
     private _context = UCC_CART_CONTEXT;
-    private _cartRepository = new UccCartRepository();
+    private _cartRepository: UccCartRepository;
     private _cartModal: UccCartModalElement;
     
     constructor(host: HTMLElement) {
         this._host = host;
+        this._cartRepository = new UccCartRepository(host);
         this._cartModal = new UccCartModalElement(host);
         this._observerDocumentLang();
         this._bindEvents();
@@ -51,6 +52,12 @@ export class UccApi {
         this._host.addEventListener(UccEvent.CART_CHANGED, async () => {
             await this._fetchCart();
         });
+        this._host.addEventListener(UccEvent.CART_ERROR, async (e: Event) => {
+            const evt = e as UccEvent;
+            const config = this._context.config.get();
+            config?.onError?.apply(this, [evt.Detail]);
+            console.log(evt.Detail);
+        });
     }
     
     private _observerDocumentLang = () => {
@@ -64,33 +71,32 @@ export class UccApi {
         observer.observe(this._host.ownerDocument.documentElement, { attributes: true });
     }
     
-    public init = (config?:Partial<CartConfig>) => {
+    public init = async (config:Partial<CartConfig>) => {
+
+        const { locales, ...rest } = config;
         
-        if (config) 
-        {
-            const { locales, ...rest } = config;
-            
-            // Merge config with default values
-            const cfg : CartConfig = {
-                lang: 'en',
-                ...rest
-            }
-
-            cfg.locales = {
-                ...this.defaultLocales,
-                ...locales
-            }
-            
-            console.log(cfg)
-
-            // Set the config in context
-            this._context.config.set(cfg);
-            
-            // Fetch the cart
-            this._fetchCart();
+        // Merge config with default values
+        const cfg : CartConfig = {
+            lang: 'en',
+            ...rest
         }
 
-        // Process UI elements
+        cfg.locales = {
+            ...this.defaultLocales,
+            ...locales
+        }
+
+        // Set the config in context
+        this._context.config.set(cfg);
+        
+        // Fetch the cart
+        await this._fetchCart();
+
+        // Bind UI elements
+        this.bind();
+    }
+    
+    public bind = () => {
         processAddToCartButtons(this._host);
         processCartButtons(this._host);
         processCartCountLabels(this._host);
@@ -131,6 +137,14 @@ export class UccApi {
         this._context.config.set({ 
             ...currentConfig,
             showPricesIncludingTax: value
+        });
+    }
+    
+    public setOnError = (callback:(msg:string) => void) => {
+        const currentConfig = this._context.config.get()!;
+        this._context.config.set({ 
+            ...currentConfig,
+            onError: callback
         });
     }
     

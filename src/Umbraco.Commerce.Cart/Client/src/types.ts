@@ -23,6 +23,7 @@ export type CartConfig = {
     properties?: string[]
     locales?: Record<string, Record<string, string>>
     showPricesIncludingTax?: boolean
+    onError?: (msg: string) => void
 }
 
 export type Cart = {
