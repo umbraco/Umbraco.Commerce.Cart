@@ -11,7 +11,7 @@ export class UccApi {
     
     public readonly defaultLocales : Record<string, Record<string, string>> = {
         en: {
-            cart_title: 'Cart Summary',
+            cart_title: 'My Cart',
             close_cart: 'Close Cart (ESC)',
             checkout: 'Checkout',
             taxes: 'Taxes',
