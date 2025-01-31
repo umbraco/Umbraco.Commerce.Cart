@@ -22,12 +22,19 @@ export type CartConfig = {
     lang: string
     properties?: string[]
     locales?: Record<string, Record<string, string>>
+    showPricesIncludingTax?: boolean
 }
 
 export type Cart = {
     id: string
-    items: CartItem[]
+    items: BundlableCartItem[]
     subtotal: FormattedPrice
+}
+
+export type BundlableCartItem = CartItem & {
+    bundleReference?: string
+    items?: CartItem[]
+    basePrice: FormattedPrice
 }
 
 export type CartItem = {

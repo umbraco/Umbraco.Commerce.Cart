@@ -1,3 +1,5 @@
+import {trapFocus} from "../utils.ts";
+
 export class UccModalElement
 {
     protected readonly _host: HTMLElement;
@@ -31,14 +33,28 @@ export class UccModalElement
         }
     }
     
+    private _escHandler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            this.close();
+        }
+    }
+    
+    private _trapFocus = (e: KeyboardEvent) => {
+        trapFocus(e, '.ucc-modal');
+    }
+    
     public open = () => {
         this._host.querySelector('.ucc-modal-container')!.classList.add('ucc-modal-container--open');
         this._host.ownerDocument.body.style.overflow = 'hidden';
+        this._host.ownerDocument.addEventListener('keydown', this._escHandler);
+        this._host.ownerDocument.addEventListener('keydown', this._trapFocus);
     }
 
     public close = () => {
         this._host.querySelector('.ucc-modal-container')!.classList.remove('ucc-modal-container--open');
         this._host.ownerDocument.body.style.overflow = '';
+        this._host.ownerDocument.removeEventListener('keydown', this._escHandler);
+        this._host.ownerDocument.removeEventListener('keydown', this._trapFocus);
     }
 
     private _attachModalTemplate() 

@@ -1,5 +1,5 @@
 import { processAddToCartButtons } from "../processors/ucc-add-to-cart-button.processor.ts";
-import { Cart, CartConfig } from "../types.ts";
+import {Cart, CartConfig, CartOptions} from "../types.ts";
 import { UCC_CART_CONTEXT } from "../contexts/ucc.context.ts";
 import { UccCartModalElement } from "../components/ucc-cart-modal.element.ts";
 import { UccEvent } from "../events/ucc.event.ts";
@@ -15,9 +15,9 @@ export class UccApi {
             close_cart: 'Close Cart',
             checkout: 'Checkout',
             taxes: 'Taxes',
-            shipping: 'Shipping',
-            shipping_message: 'Calculated at Checkout',
+            subtotal: 'Subtotal',
             total: 'Total',
+            shipping_and_discounts_message: 'Calculate shipping and apply discounts during checkout',
             remove: 'Remove',
             cart_empty: 'Your cart is empty',
         },
@@ -57,7 +57,7 @@ export class UccApi {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
-                    this._context.config.set({ lang: this._host.ownerDocument.documentElement.lang, ...this._context.config.get() });
+                    this._context.config.set({ ...this._context.config.get()!, lang: this._host.ownerDocument.documentElement.lang });
                 }
             });
         });
@@ -102,27 +102,35 @@ export class UccApi {
     
     public setStore = (store:string) => {
         const currentConfig = this._context.config.get()!;
-        this._context.config.set({ store, ...currentConfig });
+        this._context.config.set({ ...currentConfig, store });
     }
     
     public setCheckoutUrl = (url:string) => {
         const currentConfig = this._context.config.get()!;
-        this._context.config.set({ checkoutUrl: url, ...currentConfig });
+        this._context.config.set({ ...currentConfig, checkoutUrl: url });
     }
 
     public addLocale = (locale:string, values:Record<string, string>) => {
         const currentConfig = this._context.config.get()!;
         this._context.config.set({ 
-            locales: { ...currentConfig.locales, [locale]: values },
-            ...currentConfig
+            ...currentConfig,
+            locales: { ...currentConfig.locales, [locale]: values }
         });
     }
     
     public showProperty = (property:string) => {
         const currentConfig = this._context.config.get()!;
         this._context.config.set({ 
-            properties: [...currentConfig.properties!, property],
-            ...currentConfig
+            ...currentConfig,
+            properties: [ ...(currentConfig.properties ?? []), property ]
+        });
+    }
+    
+    public showPricesIncludingTax = (value:boolean) => {
+        const currentConfig = this._context.config.get()!;
+        this._context.config.set({ 
+            ...currentConfig,
+            showPricesIncludingTax: value
         });
     }
     

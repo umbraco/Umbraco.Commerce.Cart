@@ -20,6 +20,35 @@ export const debounce = (callback: Function, wait: number) => {
     };
 }
 
+export function trapFocus(e: KeyboardEvent, selector:string) 
+{    
+    const isTabPressed = e.key === `Tab` || e.keyCode === 9;
+    if (!isTabPressed) {
+        return;
+    }
+    
+    const focusableElements = `button, [href], input, select, textarea, iframe, [tabindex]:not([tabindex="-1"])`;
+    const modal = document.querySelector<HTMLElement>(selector);
+    if (!modal) {
+        return;
+    }
+
+    // get focusable elements in modal
+    const allFocusableElements = modal.querySelectorAll<HTMLElement>(focusableElements);
+    const firstFocusableElement = allFocusableElements[0];
+    const lastFocusableElement = allFocusableElements[allFocusableElements.length - 1];
+    
+    if (e.shiftKey) {
+        if (document.activeElement === firstFocusableElement || !document.activeElement?.closest(selector)) {
+            lastFocusableElement.focus();
+            e.preventDefault();
+        }
+    } else if (document.activeElement === lastFocusableElement || !document.activeElement?.closest(selector)) {
+        firstFocusableElement.focus();
+        e.preventDefault();
+    }
+}
+
 export type ReactiveValue<T> = {
     hasValue: () => boolean;
     get: () => T | null;
