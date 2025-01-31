@@ -20,6 +20,7 @@ export type CartConfig = {
     store?: string
     checkoutUrl?: string
     lang: string
+    properties?: string[]
     locales?: Record<string, Record<string, string>>
 }
 

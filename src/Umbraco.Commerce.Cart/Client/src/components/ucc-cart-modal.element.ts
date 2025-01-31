@@ -53,42 +53,55 @@ export class UccCartModalElement extends UccModalElement
             const config = this._context.config.get()!;
             
             if (cart && cart.items.length > 0) {
-                this._host.querySelector('.ucc-cart-items')!.innerHTML = cart.items.map((item) => `
-                    <div class="ucc-cart-item" data-id="${ item.id }">
-                        ${item.imageUrl ? `
-                            <figure class="ucc-cart-item__image">
-                                <img src="${item.imageUrl}" alt="${item.name}">
-                            </figure>` : ''}
-                        <div class="ucc-cart-item__body">
-                            <div class="ucc-cart-item__content ucc-split">
-                                <div class="ucc-split__left">
-                                    <h3 class="ucc-cart-item__title">${item.name}</h3>
-                                    ${item.attributes ? `
-                                        <div class="ucc-cart-item__attributes">
-                                            ${Object.keys(item.attributes).map((key) => `
-                                                <div class="ucc-cart-item__attribute">
-                                                    <span class="ucc-cart-item__attribute-key">${key}</span>
-                                                    <span class="ucc-cart-item__attribute-value">${item.attributes![key]}</span>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    ` : ''}
+                this._host.querySelector('.ucc-cart-items')!.innerHTML = cart.items.map((item) => {
+                    const propsToDisplay = Object.keys(item.properties ?? {}).filter((x) => (config.properties ?? []).map(y => y.toLowerCase()).includes(x.toLowerCase()));
+                    return `
+                        <div class="ucc-cart-item" data-id="${ item.id }">
+                            ${item.imageUrl ? `
+                                <figure class="ucc-cart-item__image">
+                                    <img src="${item.imageUrl}" alt="${item.name}">
+                                </figure>` : ''}
+                            <div class="ucc-cart-item__body">
+                                <div class="ucc-cart-item__content ucc-split">
+                                    <div class="ucc-split__left">
+                                        <h3 class="ucc-cart-item__title">${item.name}</h3>
+                                        ${item.attributes ? `
+                                            <div class="ucc-cart-item__attributes">
+                                                ${Object.keys(item.attributes).map((key) => `
+                                                    <div class="ucc-cart-item__attribute">
+                                                        <span class="ucc-cart-item__attribute-key">${key}</span>
+                                                        <span class="ucc-cart-item__attribute-value">${item.attributes![key]}</span>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                        ${propsToDisplay.length > 0 ? `
+                                            <div class="ucc-cart-item__properties">
+                                                ${propsToDisplay.map((key) => `
+                                                    <div class="ucc-cart-item__property">
+                                                        <span class="ucc-cart-item__property-key">${config?.locales![config.lang][`property_${key.toLowerCase()}`] ?? key}</span>
+                                                        <span class="ucc-cart-item__property-value">${item.properties![key]}</span>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    <div class="ucc-split__right">
+                                        <button class="ucc-cart-item__remove" title="${config?.locales![config.lang].remove ?? 'Remove'}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
+                                    </div>
                                 </div>
-                                <div class="ucc-split__right">
-                                    <button class="ucc-cart-item__remove" title="${config?.locales![config.lang].remove ?? 'Remove'}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg></button>
-                                </div>
-                            </div>
-                            <div class="ucc-cart-item__foot ucc-split ucc-split--center">
-                                <div class="ucc-split__left">
-                                    <input type="number" value="${item.quantity}" min="1" class="ucc-cart-item__quantity">
-                                </div>
-                                <div class="ucc-split__right">
-                                    <span class="ucc-cart-item__price">${item.total.withTax}</span>
+                                <div class="ucc-cart-item__foot ucc-split ucc-split--center">
+                                    <div class="ucc-split__left">
+                                        <input type="number" value="${item.quantity}" min="1" class="ucc-cart-item__quantity">
+                                    </div>
+                                    <div class="ucc-split__right">
+                                        <span class="ucc-cart-item__price">${item.total.withTax}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `
+                }).join('');
                 this._host.querySelector<HTMLElement>('.ucc-cart-totals')!.style.display = '';
                 this._host.querySelector<HTMLElement>('.ucc-cart-total--taxes .ucc-cart-total-value')!.textContent = cart.subtotal.tax;
                 this._host.querySelector<HTMLElement>('.ucc-cart-total--total .ucc-cart-total-value')!.textContent = cart.subtotal.withTax;

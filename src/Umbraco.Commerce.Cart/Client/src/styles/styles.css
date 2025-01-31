@@ -186,17 +186,20 @@
     border-radius: var(--ucc-border-radius);
 }
 
-.ucc-cart-item__attribute {
+.ucc-cart-item__attribute,
+.ucc-cart-item__property {
     font-size: var(--ucc-text-sm);
     color: var(--ucc-text-color-light);
 }
 
-.ucc-cart-item__attribute-key:after {
-    content: ':';
+.ucc-cart-item__attribute-key,
+.ucc-cart-item__property-key {
+    font-weight: 600;
 }
 
-.ucc-cart-item__attribute-value {
-    font-weight: 600;
+.ucc-cart-item__attribute-key:after,
+.ucc-cart-item__property-key:after {
+    content: ':';
 }
 
 .ucc-cart-item__price {

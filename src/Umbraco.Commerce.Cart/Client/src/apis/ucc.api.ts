@@ -9,6 +9,20 @@ import {processCartCountLabels} from "../processors/ucc-cart-count-labels.proces
 
 export class UccApi {
     
+    public readonly defaultLocales : Record<string, Record<string, string>> = {
+        en: {
+            cart_title: 'Cart Summary',
+            close_cart: 'Close Cart',
+            checkout: 'Checkout',
+            taxes: 'Taxes',
+            shipping: 'Shipping',
+            shipping_message: 'Calculated at Checkout',
+            total: 'Total',
+            remove: 'Remove',
+            cart_empty: 'Your cart is empty',
+        },
+    }
+    
     private readonly _host;
     private _context = UCC_CART_CONTEXT;
     private _cartRepository = new UccCartRepository();
@@ -54,29 +68,20 @@ export class UccApi {
         
         if (config) 
         {
+            const { locales, ...rest } = config;
+            
             // Merge config with default values
-            const cfg = {
+            const cfg : CartConfig = {
                 lang: 'en',
-                ...config
+                ...rest
             }
 
-            // Ensure there is a default locale
-            if (!cfg.locales?.en) {
-                cfg.locales = {
-                    en: {
-                        cart_title: 'Cart Summary',
-                        close_cart: 'Close Cart',
-                        checkout: 'Checkout',
-                        taxes: 'Taxes',
-                        shipping: 'Shipping',
-                        shipping_message: 'Calculated at Checkout',
-                        total: 'Total',
-                        remove: 'Remove',
-                        cart_empty: 'Your cart is empty',
-                    },
-                    ...cfg.locales
-                }
+            cfg.locales = {
+                ...this.defaultLocales,
+                ...locales
             }
+            
+            console.log(cfg)
 
             // Set the config in context
             this._context.config.set(cfg);
@@ -109,6 +114,14 @@ export class UccApi {
         const currentConfig = this._context.config.get()!;
         this._context.config.set({ 
             locales: { ...currentConfig.locales, [locale]: values },
+            ...currentConfig
+        });
+    }
+    
+    public showProperty = (property:string) => {
+        const currentConfig = this._context.config.get()!;
+        this._context.config.set({ 
+            properties: [...currentConfig.properties!, property],
             ...currentConfig
         });
     }
