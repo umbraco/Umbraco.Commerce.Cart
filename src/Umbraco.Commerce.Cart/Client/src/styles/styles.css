@@ -1,3 +1,40 @@
+:root {
+    
+    /* Colors */
+    --ucc-primary-color: #155dfc;
+    --ucc-primary-color-light: #51a2ff;
+    --ucc-primary-color-dark: #193cb8;
+    --ucc-danger-color: #9f0712;
+    --ucc-danger-background-color: #ffc9c9;
+
+    /* Font */
+    --ucc-font-family: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+    
+    /* Text */
+    --ucc-text-color: #364153;
+    --ucc-text-color-light: #99a1af;
+    --ucc-text-color-lighter: #c1c7d0;
+    --ucc-text-color-dark: #101828;
+
+    --ucc-text-lg: 20px;
+    --ucc-text-md: 16px;
+    --ucc-text-sm: 14px;
+    
+    /* Borders */
+    --ucc-border-color: #ddd;
+    --ucc-border-radius: 5px;
+    
+    /* Components */
+    --ucc-button-background-color: var(--ucc-primary-color);
+    --ucc-button-text-color: #fff;
+    --ucc-button-background-color-hover: var(--ucc-primary-color-dark);
+    --ucc-button-text-color-hover: #fff;
+    --ucc-button-background-color-disabled: #d1d5dc;
+    --ucc-button-text-color-disabled: #fff;
+    
+    --ucc-cart-width: 550px;
+}
+
 .ucc-modal-container {
     position: relative;
 }
@@ -20,7 +57,7 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 500px;
+    width: 100%;
     height: 100%;
     flex-direction: column;
     background-color: white;
@@ -31,22 +68,37 @@
     transform: translateX(0);
 }
 
+@media (min-width: 768px) {
+    .ucc-modal {
+        width: var(--ucc-cart-width);
+        border-left: solid 1px var(--ucc-border-color);
+    }
+}
+
 .ucc-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--ucc-border-color);
 }
 
 .ucc-modal-title {
-    font-size: 20px;
+    font-family: var(--ucc-font-family), sans-serif;
+    font-size: var(--ucc-text-lg);
     font-weight: 600;
+    color: var(--ucc-text-color-dark);
     margin: 0;
 }
 
 .ucc-modal-close {
     cursor: pointer;
+    color: var(--ucc-text-color-dark);
+    transition: color 0.2s;
+}
+
+.ucc-modal-close:hover {
+    color: var(--ucc-text-color-light);
 }
 
 .ucc-modal-body {
@@ -58,13 +110,14 @@
     display: flex;
     flex-direction: column;
     padding: 20px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--ucc-border-color);
 }
 
 .ucc-cart-item {
+    font-family: var(--ucc-font-family), sans-serif;
     display: flex;
     padding: 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--ucc-border-color);
 }
 
 .ucc-cart-item__image {
@@ -72,13 +125,20 @@
 }
 
 .ucc-cart-item__image img {
-    width: 75px;
-    height: 75px;
+    width: 50px;
+    height: 50px;
     max-width: none;
     max-height: none;
     object-fit: cover;
-    border: solid 1px #ddd;
-    border-radius: 5px;
+    border: solid 1px var(--ucc-border-color);
+    border-radius: var(--ucc-border-radius);
+}
+
+@media (min-width: 768px) {
+    .ucc-cart-item__image img {
+        width: 75px;
+        height: 75px;
+    }
 }
 
 .ucc-cart-item__body {
@@ -86,28 +146,32 @@
 }
 
 .ucc-cart-item__title {
+    font-family: var(--ucc-font-family), sans-serif;
     font-weight: 600;
-    font-size: 16px;
+    font-size: var(--ucc-text-md);
+    color: var(--ucc-text-color);
     line-height: 1.2;
     margin-bottom: 5px;
 }
 
-.ucc-cart-item__delete {
+.ucc-cart-item__remove {
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background-color: #eee;
+    color: var(--ucc-text-color-light);
+    background-color: transparent;
     width: 30px;
     height: 30px;
     min-width: 30px;
     min-height: 30px;
     border-radius: 50%;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-.ucc-cart-item__delete:hover {
-    background-color: #ffc9c9;
+.ucc-cart-item__remove:hover {
+    color: var(--ucc-danger-color);
+    background-color: var(--ucc-danger-background-color);
 }
 
 .ucc-cart-item__foot {
@@ -118,13 +182,13 @@
     width: 75px;
     padding: 5px;
     text-align: left;
-    border: 1px solid #ddd;
-    border-radius: 3px;
+    border: 1px solid var(--ucc-border-color);
+    border-radius: var(--ucc-border-radius);
 }
 
 .ucc-cart-item__attribute {
-    font-size: 14px;
-    color: #666;
+    font-size: var(--ucc-text-sm);
+    color: var(--ucc-text-color-light);
 }
 
 .ucc-cart-item__attribute-key:after {
@@ -136,8 +200,9 @@
 }
 
 .ucc-cart-item__price {
+    color: var(--ucc-text-color-dark);
     font-weight: bold;
-    font-size: 20px;
+    font-size: var(--ucc-text-lg);
 }
 
 .ucc-cart-totals {
@@ -147,6 +212,8 @@
 }
 
 .ucc-cart-total {
+    font-size: var(--ucc-text-md);
+    color: var(--ucc-text-color);
     margin-bottom: 5px;
 }
 
@@ -157,11 +224,47 @@
 .ucc-cart-checkout {
     cursor: pointer;
     display: block;
+    font-family: var(--ucc-font-family), sans-serif;
     font-weight: 600;
-    background-color: #4fd1c5;
+    font-size: var(--ucc-text-md);
+    background-color: var(--ucc-button-background-color);
+    color: var(--ucc-button-text-color);
     padding: 10px 20px;
     text-align: center;
-    border-radius: 3px;
+    border-radius: var(--ucc-border-radius);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.ucc-cart-checkout:hover {
+    background-color: var(--ucc-button-background-color-hover);
+    color: var(--ucc-button-text-color-hover);
+}
+
+.ucc-cart-checkout--disabled,
+.ucc-cart-checkout--disabled:hover {
+    cursor: not-allowed;
+    background-color: var(--ucc-button-background-color-disabled);
+    color: var(--ucc-button-text-color-disabled);
+}
+
+.ucc-cart-empty {
+    font-family: var(--ucc-font-family), sans-serif;
+    font-size: var(--ucc-text-lg);
+    font-weight: 600;
+    color: var(--ucc-text-color-lighter);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.ucc-cart-empty svg {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
 }
 
 .ucc-split {

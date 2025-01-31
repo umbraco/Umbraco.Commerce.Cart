@@ -71,6 +71,8 @@ export class UccApi {
                         shipping: 'Shipping',
                         shipping_message: 'Calculated at Checkout',
                         total: 'Total',
+                        remove: 'Remove',
+                        cart_empty: 'Your cart is empty',
                     },
                     ...cfg.locales
                 }
