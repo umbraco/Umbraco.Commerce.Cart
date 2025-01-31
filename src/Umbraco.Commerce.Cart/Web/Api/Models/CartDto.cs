@@ -10,6 +10,8 @@ public class CartDto
 public class BundlableCartItemDto : CartItemDto
 {
     public string? BundleReference { get; set; }
+    
+    public FormattedPriceDto? BasePrice { get; set; }
     public IEnumerable<CartItemDto> Items { get; set; }
 }
 

@@ -19,9 +19,17 @@ internal static class CartModelFactory
 
                 if (x.IsBundle(out var bundleOrderLineReadOnly))
                 {
+                    var basePrice = await bundleOrderLineReadOnly.BasePrice.WithoutAdjustments.FormattedAsync();
+                    
                     ol.BundleReference = bundleOrderLineReadOnly.BundleId;
                     ol.Items = await bundleOrderLineReadOnly.OrderLines
                         .SelectAsync(async y => await ItemEntityToDtoAsync(ctx, y, new CartItemDto()));
+                    ol.BasePrice = new FormattedPriceDto
+                    {
+                        WithTax = basePrice.WithTax,
+                        Tax = basePrice.Tax,
+                        WithoutTax = basePrice.WithoutTax
+                    };
                 }
                 
                 return ol;
