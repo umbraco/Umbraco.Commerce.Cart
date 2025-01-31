@@ -44,16 +44,28 @@
 }
 
 .ucc-modal-background {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: var(--ucc-modal-overlay-color);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease-in-out, visibility 0.25s;
 }
-.ucc-modal-container--open .ucc-modal-background {
-    display: block;
+
+@media (min-width: 768px) {
+    
+    .ucc-modal-container--open .ucc-modal-background {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .ucc-modal-container:not(.ucc-modal-container--open)  .ucc-modal-background {
+        transition: opacity 0.25s ease-in-out, visibility 0s 0.25s;
+    }
+    
 }
 
 .ucc-modal {
