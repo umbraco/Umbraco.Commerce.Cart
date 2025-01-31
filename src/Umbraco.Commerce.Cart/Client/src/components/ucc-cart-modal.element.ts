@@ -1,7 +1,7 @@
 import { UCC_CART_CONTEXT } from "../contexts/ucc.context.ts";
 import { CartConfig, CartItem } from "../types.ts";
 import { UccModalElement } from "./ucc-modal.element.ts";
-import {debounce, delegate, getUniqueSelector} from "../utils.ts";
+import { debounce, delegate, getUniqueSelector } from "../utils.ts";
 import { UccCartRepository } from "../repositories/cart.respository.ts";
 import { UccEvent } from "../events/ucc.event.ts";
 
