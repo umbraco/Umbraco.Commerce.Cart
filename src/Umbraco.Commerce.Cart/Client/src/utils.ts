@@ -49,6 +49,40 @@ export function trapFocus(e: KeyboardEvent, selector:string)
     }
 }
 
+export const getUniqueSelector = (element:Element) => {
+    if (!(element instanceof Element)) return null;
+
+    let selector = [];
+
+    while (element.parentElement) {
+        let tag = element.tagName.toLowerCase();
+
+        // Use ID if available (most specific)
+        if (element.id) {
+            selector.unshift(`#${element.id}`);
+            break;
+        }
+
+        // Use class names if available
+        let classSelector = element.className
+            .split(/\s+/)
+            .filter(Boolean)
+            .map(cls => `.${cls}`)
+            .join('');
+
+        // Get index among siblings of the same type
+        let siblings = Array.from(element.parentElement.children).filter(
+            el => el.tagName === element.tagName
+        );
+        let index = siblings.length > 1 ? `:nth-of-type(${siblings.indexOf(element) + 1})` : '';
+
+        selector.unshift(tag + classSelector + index);
+        element = element.parentElement;
+    }
+
+    return selector.join(' > ');
+}
+
 export type ReactiveValue<T> = {
     hasValue: () => boolean;
     get: () => T | null;

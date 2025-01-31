@@ -1,7 +1,7 @@
 import { UCC_CART_CONTEXT } from "../contexts/ucc.context.ts";
 import { CartConfig, CartItem } from "../types.ts";
 import { UccModalElement } from "./ucc-modal.element.ts";
-import { debounce, delegate } from "../utils.ts";
+import {debounce, delegate, getUniqueSelector} from "../utils.ts";
 import { UccCartRepository } from "../repositories/cart.respository.ts";
 import { UccEvent } from "../events/ucc.event.ts";
 
@@ -65,6 +65,9 @@ export class UccCartModalElement extends UccModalElement
         
         const cart = this._context.cart.get();
         if (cart && cart.items.length > 0) {
+            const activeEl = this._host.ownerDocument.activeElement as HTMLElement;
+            const activeElSelector = activeEl ? getUniqueSelector(activeEl) : undefined;
+            const activeElCaretPos = activeEl instanceof HTMLInputElement ? activeEl.selectionStart : undefined;
             this._host.querySelector('.ucc-cart-items')!.innerHTML = cart.items.map((item) => {
                 const propsToDisplay = Object.keys(item.properties ?? {}).filter((x) => (config.properties ?? []).map(y => y.toLowerCase()).includes(x.toLowerCase()));
                 return `
@@ -136,6 +139,15 @@ export class UccCartModalElement extends UccModalElement
             this._host.querySelector<HTMLElement>('.ucc-cart-total--taxes .ucc-cart-total-value')!.textContent = cart.subtotal.tax;
             this._host.querySelector<HTMLElement>('.ucc-cart-total--total .ucc-cart-total-value')!.textContent = cart.subtotal.withTax;
             this._host.querySelector<HTMLElement>('.ucc-cart-checkout')!.classList.remove('ucc-cart-checkout--disabled');
+            if (activeElSelector) {
+                const activeEl = this._host.querySelector<HTMLElement>(activeElSelector);
+                if (activeEl) {
+                    activeEl.focus();
+                    if (activeEl instanceof HTMLInputElement && activeElCaretPos) {
+                        activeEl.setSelectionRange(activeElCaretPos!, activeElCaretPos!);
+                    }
+                }
+            }
         } else {
             this._host.querySelector<HTMLElement>('.ucc-cart-items')!.innerHTML = `
                     <div class="ucc-cart-empty">
