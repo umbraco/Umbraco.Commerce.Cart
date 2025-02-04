@@ -64,7 +64,14 @@ export class UccApi {
         const observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
-                    this._context.config.set({ ...this._context.config.get()!, lang: this._host.ownerDocument.documentElement.lang });
+                    if (Object.keys(this._context.config.get()!.locales!).includes(this._host.ownerDocument.documentElement.lang)) {
+                        this._context.config.set({
+                            ...this._context.config.get()!,
+                            lang: this._host.ownerDocument.documentElement.lang
+                        });
+                    } else {
+                        this.setLang('en');
+                    }
                 }
             });
         });

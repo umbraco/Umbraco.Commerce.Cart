@@ -1,12 +1,50 @@
-export const isEmpty = (value: any) => 
+export type ReactiveValue<T> = {
+    hasValue: () => boolean;
+    get: () => T | null;
+    set: (newValue: T | null) => void;
+    subscribe: (subscriber: Function) => () => void;
+}
+
+export const reactiveValue = <T>(initialValue:T | null) : ReactiveValue<T> =>
 {
+    let value : T | null = initialValue;
+    const subscribers = new Set<Function>()
+
+    function hasValue() : boolean {
+        return value !== null;
+    }
+
+    function get() : T | null {
+        return value;
+    }
+
+    function set(newValue:T | null) : void {
+        if (value !== newValue) {
+            const oldValue = value;
+            value = newValue;
+            subscribers.forEach((subscriber) => subscriber(newValue, oldValue));
+        }
+    }
+
+    function subscribe(subscriber: Function) : () => void {
+        subscribers.add(subscriber);
+        subscriber(value, null);
+        return () => {
+            subscribers.delete(subscriber);
+        }
+    }
+
+    return { hasValue, get, set, subscribe };
+}
+
+export const isEmpty = (value: any) => {
     return (value == null || (typeof value === "string" && value.trim().length === 0));
 }
 
 export const delegate = (el:Element, selector:string, event:string, handler: Function) => {
     el.addEventListener(event, e => {
         const target = e.target as Element;
-        if (target.matches(selector) || target.closest(selector)) handler(e, el);
+        if (target.closest(selector)) handler(e, el);
     });
 }
 
@@ -17,7 +55,14 @@ export const debounce = (callback: Function, wait: number) => {
         timeoutId = window.setTimeout(() => {
             callback.apply(null, args);
         }, wait);
-    };
+    }; 
+}
+
+export const difference = <T>(a: T[], b: T[]) => {
+    const added = a.filter(x => !b.includes(x));
+    const removed = b.filter(x => !a.includes(x));
+    const intersects = a.filter(x => b.includes(x));
+    return { added, removed, intersects };
 }
 
 export function trapFocus(e: KeyboardEvent, selector:string) 
@@ -49,75 +94,3 @@ export function trapFocus(e: KeyboardEvent, selector:string)
     }
 }
 
-export const getUniqueSelector = (element:Element) => {
-    if (!(element instanceof Element)) return null;
-
-    let selector = [];
-
-    while (element.parentElement) {
-        let tag = element.tagName.toLowerCase();
-
-        // Use ID if available (most specific)
-        if (element.id) {
-            selector.unshift(`#${element.id}`);
-            break;
-        }
-
-        // Use class names if available
-        let classSelector = element.className
-            .split(/\s+/)
-            .filter(Boolean)
-            .map(cls => `.${cls}`)
-            .join('');
-
-        // Get index among siblings of the same type
-        let siblings = Array.from(element.parentElement.children).filter(
-            el => el.tagName === element.tagName
-        );
-        let index = siblings.length > 1 ? `:nth-of-type(${siblings.indexOf(element) + 1})` : '';
-
-        selector.unshift(tag + classSelector + index);
-        element = element.parentElement;
-    }
-
-    return selector.join(' > ');
-}
-
-export type ReactiveValue<T> = {
-    hasValue: () => boolean;
-    get: () => T | null;
-    set: (newValue: T | null) => void;
-    subscribe: (subscriber: Function) => () => void;
-}
-
-export const reactiveValue = <T>(initialValue:T | null) : ReactiveValue<T> =>
-{
-    let value : T | null = initialValue;
-    const subscribers = new Set<Function>()
-
-    function hasValue() : boolean {
-        return value !== null;
-    }
-    
-    function get() : T | null {
-        return value;
-    }
-
-    function set(newValue:T | null) : void {
-        if (value !== newValue) {
-            const oldValue = value;
-            value = newValue;
-            subscribers.forEach((subscriber) => subscriber(newValue, oldValue));
-        }
-    }
-
-    function subscribe(subscriber: Function) : () => void {
-        subscribers.add(subscriber);
-        subscriber(value, null);
-        return () => {
-            subscribers.delete(subscriber);
-        }
-    }
-
-    return { hasValue, get, set, subscribe };
-}
