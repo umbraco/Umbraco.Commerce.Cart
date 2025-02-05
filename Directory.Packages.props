@@ -5,9 +5,9 @@
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
     <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.6.133" />
-    <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507" />
-    <GlobalPackageReference Include="Umbraco.Code" Version="[2.2.0, 3)" />
+    <GlobalPackageReference Include="Umbraco.Code" Version="2.2.0" />
     <GlobalPackageReference Include="Umbraco.GitVersioning.Extensions" Version="0.2.0" />
+    <GlobalPackageReference Include="Umbraco.JsonSchema.Extensions" Version="0.3.0" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Umbraco.Commerce.Cms" Version="[15, 15.999.999)" />
