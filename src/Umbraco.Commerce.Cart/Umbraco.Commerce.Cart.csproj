@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <Title>Umbraco Commerce Cart</Title>
+        <Description>Umbraco Commerce Cart</Description>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <StaticWebAssetBasePath>App_Plugins/UmbracoCommerceCart</StaticWebAssetBasePath>
@@ -18,7 +19,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Umbraco.Commerce.Cms" Version="15.0.0" />
+      <PackageReference Include="Umbraco.Commerce.Cms" />
     </ItemGroup>
+
+    <!-- Update umbraco-package.json files with current build version -->
+    <!-- Assumes that the client assets have already been built to wwwroot -->
+    <Target Name="UpdatePackageManifestVersion" BeforeTargets="BeforeBuild" DependsOnTargets="GetBuildVersion;GetUmbracoBuildVersion" Condition="Exists('wwwroot\umbraco-package.json')">
+        <Message Text="Update umbraco-package.json files with current build version" Importance="high" />
+        <ItemGroup>
+            <_PackageManifestFiles Include="wwwroot\umbraco-package.json" />
+        </ItemGroup>
+        <JsonPathUpdateValue JsonFile="%(_PackageManifestFiles.FullPath)" Path="$.version" Value="&quot;$(PackageVersion)&quot;" />
+    </Target>
 
 </Project>

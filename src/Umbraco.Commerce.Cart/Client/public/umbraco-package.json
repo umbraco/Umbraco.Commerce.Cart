@@ -1,0 +1,7 @@
+﻿{
+    "id": "Umbraco.Commerce.Cart",
+    "name": "Umbraco Commerce Cart",
+    "version": "15.0.0",
+    "allowPackageTelemetry": true,
+    "extensions": [ ]
+}
