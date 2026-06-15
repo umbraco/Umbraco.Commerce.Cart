@@ -34,7 +34,8 @@
   <!-- Package validation -->
   <PropertyGroup>
     <EnablePackageValidation>false</EnablePackageValidation>
-    <PackageValidationBaselineVersion>17.0.0</PackageValidationBaselineVersion>
+    <!-- No previous 18.x package to validate against yet; re-enable once 18.0.0 is published. -->
+    <!-- <PackageValidationBaselineVersion>18.0.0-rc1</PackageValidationBaselineVersion> -->
     <EnableStrictModeForCompatibleFrameworksInPackage>true</EnableStrictModeForCompatibleFrameworksInPackage>
     <EnableStrictModeForCompatibleTfms>true</EnableStrictModeForCompatibleTfms>
   </PropertyGroup>
