@@ -1,4 +1,5 @@
-﻿using Umbraco.Commerce.Core.Api;
+﻿using System.Linq;
+using Umbraco.Commerce.Core.Api;
 using Umbraco.Commerce.Core.Models;
 using Umbraco.Commerce.Extensions;
 
@@ -9,7 +10,26 @@ internal static class CartModelFactory
     internal static async Task<CartDto> EntityToDtoAsync(MappingContext ctx, OrderReadOnly entity)
     {
         var subtotal = await entity.SubtotalPrice.Value.FormattedAsync();
-        
+        var subtotalBeforeDiscounts = await entity.SubtotalPrice.WithoutAdjustments.FormattedAsync();
+
+        // The discount applied to the subtotal is the difference between the subtotal before and
+        // after adjustments (a negative amount). Deriving it this way guarantees the displayed
+        // line items + discount reconcile with the subtotal regardless of whether discounts were
+        // applied at the order line or order level (see issue #847).
+        var discountPrice = entity.SubtotalPrice.Value - entity.SubtotalPrice.WithoutAdjustments;
+        var hasDiscount = discountPrice.WithoutTax != 0 || discountPrice.WithTax != 0;
+        FormattedPriceDto? discount = null;
+        if (hasDiscount)
+        {
+            var formattedDiscount = await discountPrice.FormattedAsync();
+            discount = new FormattedPriceDto
+            {
+                WithTax = formattedDiscount.WithTax,
+                Tax = formattedDiscount.Tax,
+                WithoutTax = formattedDiscount.WithoutTax
+            };
+        }
+
         return new CartDto
         {
             Id = entity.Id,
@@ -34,6 +54,14 @@ internal static class CartModelFactory
                 
                 return ol;
             }),
+            SubtotalBeforeDiscounts = new FormattedPriceDto
+            {
+                WithTax = subtotalBeforeDiscounts.WithTax,
+                Tax = subtotalBeforeDiscounts.Tax,
+                WithoutTax = subtotalBeforeDiscounts.WithoutTax
+            },
+            Discount = discount,
+            DiscountNames = entity.Discounts.Select(x => x.DiscountName).Distinct().ToList(),
             Subtotal = new FormattedPriceDto
             {
                 WithTax = subtotal.WithTax,

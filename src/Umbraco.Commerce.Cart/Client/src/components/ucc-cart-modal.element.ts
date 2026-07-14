@@ -186,7 +186,24 @@ export class UccCartModalElement extends UccModalElement
             this._host.querySelector<HTMLElement>('.ucc-cart-empty')!.style.display = 'none';
             
             // Populate totals
-            this._host.querySelector<HTMLElement>('.ucc-cart-total--subtotal .ucc-cart-total-value')!.textContent = cart.subtotal.withoutTax;
+            // Show the pre-discount subtotal so it reconciles with the (un-discounted) cart item prices
+            const subtotalBeforeDiscounts = cart.subtotalBeforeDiscounts ?? cart.subtotal;
+            this._host.querySelector<HTMLElement>('.ucc-cart-total--subtotal .ucc-cart-total-value')!.textContent = subtotalBeforeDiscounts.withoutTax;
+
+            // Show a discount line below the subtotal when a discount has been applied, so the
+            // subtotal, discount and total add up for the customer
+            const discountEl = this._host.querySelector<HTMLElement>('.ucc-cart-total--discount')!;
+            if (cart.discount) {
+                const discountLabel = cart.discountNames && cart.discountNames.length > 0
+                    ? cart.discountNames.join(', ')
+                    : localize('discount');
+                discountEl.querySelector<HTMLElement>('.ucc-cart-total-label')!.textContent = discountLabel;
+                discountEl.querySelector<HTMLElement>('.ucc-cart-total-value')!.textContent = cart.discount.withoutTax;
+                discountEl.classList.remove('ucc-cart-total--empty');
+            } else {
+                discountEl.classList.add('ucc-cart-total--empty');
+            }
+
             this._host.querySelector<HTMLElement>('.ucc-cart-total--taxes .ucc-cart-total-value')!.textContent = cart.subtotal.tax;
             this._host.querySelector<HTMLElement>('.ucc-cart-total--total .ucc-cart-total-value')!.textContent = cart.subtotal.withTax;
 
@@ -234,6 +251,10 @@ export class UccCartModalElement extends UccModalElement
         this.setFooter(`
             <div class="ucc-cart-totals">
                 <div class="ucc-cart-totals__item ucc-cart-total ucc-cart-total--subtotal ucc-split">
+                    <span class="ucc-cart-total-label ucc-split__left"></span>
+                    <span class="ucc-cart-total-value ucc-split__right"></span>
+                </div>
+                <div class="ucc-cart-totals__item ucc-cart-total ucc-cart-total--discount ucc-cart-total--empty ucc-split">
                     <span class="ucc-cart-total-label ucc-split__left"></span>
                     <span class="ucc-cart-total-value ucc-split__right"></span>
                 </div>
