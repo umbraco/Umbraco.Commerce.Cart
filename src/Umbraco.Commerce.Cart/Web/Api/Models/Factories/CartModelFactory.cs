@@ -8,8 +8,11 @@ internal static class CartModelFactory
 {
     internal static async Task<CartDto> EntityToDtoAsync(MappingContext ctx, OrderReadOnly entity)
     {
-        var subtotal = await entity.SubtotalPrice.Value.FormattedAsync();
-        
+        // Show the subtotal before any discounts are applied so it reconciles with the cart's
+        // item line prices, which are also shown without adjustments. Discounts are surfaced
+        // during the checkout flow, not in the cart (see issue #847).
+        var subtotal = await entity.SubtotalPrice.WithoutAdjustments.FormattedAsync();
+
         return new CartDto
         {
             Id = entity.Id,
