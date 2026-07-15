@@ -267,12 +267,7 @@
     flex-direction: column-reverse;
 }
 
-.ucc-cart-totals.ucc-cart-totals--inc-tax .ucc-cart-total--subtotal,
-.ucc-cart-totals.ucc-cart-totals--inc-tax .ucc-cart-total--discount {
-    display: none;
-}
-
-.ucc-cart-total--discount.ucc-cart-total--empty {
+.ucc-cart-totals.ucc-cart-totals--inc-tax .ucc-cart-total--subtotal {
     display: none;
 }
 

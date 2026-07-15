@@ -16,7 +16,6 @@ export class UccApi {
             checkout: 'Checkout',
             taxes: 'Taxes',
             subtotal: 'Subtotal',
-            discount: 'Discount',
             total: 'Total',
             shipping_and_discounts_message: 'Calculate shipping and apply discounts during checkout',
             remove: 'Remove',

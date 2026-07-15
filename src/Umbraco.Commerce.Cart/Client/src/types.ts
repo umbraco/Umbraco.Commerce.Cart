@@ -29,9 +29,6 @@ export type CartConfig = {
 export type Cart = {
     id: string
     items: BundlableCartItem[]
-    subtotalBeforeDiscounts: FormattedPrice
-    discount?: FormattedPrice
-    discountNames: string[]
     subtotal: FormattedPrice
 }
 
