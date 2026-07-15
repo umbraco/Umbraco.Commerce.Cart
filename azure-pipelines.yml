@@ -118,7 +118,9 @@ stages:
               targetPath: $(Build.SourcesDirectory)
               artifactName: build_output
 
-          # Generate/upload SBOM with cdxgen
+          # Generate/upload SBOM with cdxgen.
+          # SBOM generation/upload to Dependency-Track is supplementary and must never fail the
+          # release build, so every SBOM step is marked continueOnError (failures become warnings).
           - script: |
               cd $(Build.SourcesDirectory)
               npm install --global @cyclonedx/cdxgen
