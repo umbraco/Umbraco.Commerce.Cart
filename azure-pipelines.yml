@@ -118,14 +118,18 @@ stages:
               targetPath: $(Build.SourcesDirectory)
               artifactName: build_output
 
-          # Generate/upload SBOM with cdxgen
+          # Generate/upload SBOM with cdxgen.
+          # SBOM generation/upload to Dependency-Track is supplementary and must never fail the
+          # release build, so every SBOM step is marked continueOnError (failures become warnings).
           - script: |
               cd $(Build.SourcesDirectory)
               npm install --global @cyclonedx/cdxgen
             displayName: 'Install cdxgen'
+            continueOnError: true
 
           - task: PowerShell@2
             displayName: 'Generate & upload SBOM with cdxgen (pwsh)'
+            continueOnError: true
             inputs:
               targetType: 'inline'
               pwsh: true
@@ -181,6 +185,7 @@ stages:
 
           - task: PublishPipelineArtifact@1
             displayName: 'Publish SBOM Artifact'
+            continueOnError: true
             inputs:
               targetPath: $(Build.ArtifactStagingDirectory)/bom
               artifactName: SBOM
