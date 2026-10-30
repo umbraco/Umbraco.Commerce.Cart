@@ -37,7 +37,7 @@ public sealed class CartModelFactoryTests : IDisposable
 
     private void SetupProduct(string productReference, IProductSnapshot? product)
         => _api
-            .Setup(x => x.GetProductAsync(CommerceModelBuilder.StoreId, productReference, It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetProductAsync(CommerceModelBuilder.StoreId, productReference, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
 
     [Fact]
@@ -238,8 +238,25 @@ public sealed class CartModelFactoryTests : IDisposable
         await CartModelFactory.EntityToDtoAsync(_ctx, order);
 
         _api.Verify(
-            x => x.GetProductAsync(CommerceModelBuilder.StoreId, "shirt", It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            x => x.GetProductAsync(CommerceModelBuilder.StoreId, "shirt", It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task EntityToDtoAsync_LooksUpTheVariantInTheOrdersLanguage()
+    {
+        var order = Order().WithLanguage("da-DK").WithSubtotal(P(0, 0))
+            .WithLine(l => { l.ProductReference = "shirt"; l.ProductVariantReference = "shirt-red"; })
+            .Build();
+
+        await CartModelFactory.EntityToDtoAsync(_ctx, order);
+
+        _api.Verify(
+            x => x.GetProductAsync(CommerceModelBuilder.StoreId, "shirt", "shirt-red", "da-DK", It.IsAny<CancellationToken>()),
+            Times.Once);
+        _api.Verify(
+            x => x.GetProductAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 
     [Fact]

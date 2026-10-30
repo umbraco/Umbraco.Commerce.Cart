@@ -43,6 +43,7 @@ internal static class CommerceModelBuilder
         private readonly List<OrderLineBuilder> _lines = [];
         private Price? _subtotalWithoutAdjustments;
         private Price? _subtotalValue;
+        private string _languageIsoCode = "en-GB";
 
         public Guid CurrencyId => currencyId;
 
@@ -50,6 +51,12 @@ internal static class CommerceModelBuilder
         {
             _subtotalWithoutAdjustments = withoutAdjustments;
             _subtotalValue = discountedValue ?? withoutAdjustments;
+            return this;
+        }
+
+        public OrderBuilder WithLanguage(string languageIsoCode)
+        {
+            _languageIsoCode = languageIsoCode;
             return this;
         }
 
@@ -64,6 +71,7 @@ internal static class CommerceModelBuilder
         public OrderReadOnly Build()
         {
             var state = Construct<OrderState>(StoreId, _orderId, currencyId, true);
+            Set(state, nameof(OrderState.LanguageIsoCode), _languageIsoCode);
 
             if (_subtotalWithoutAdjustments != null)
             {
