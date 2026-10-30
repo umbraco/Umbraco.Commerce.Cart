@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.Cart", "src\Umbraco.Commerce.Cart\Umbraco.Commerce.Cart.csproj", "{BB6B02C8-67AF-455E-94A8-E166B5BCD09D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Commerce.Cart.Tests", "tests\Umbraco.Commerce.Cart.Tests\Umbraco.Commerce.Cart.Tests.csproj", "{3B0CE850-FFFB-42D6-B1BB-FA5BD2D5F900}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,15 @@ Global
 		{BB6B02C8-67AF-455E-94A8-E166B5BCD09D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB6B02C8-67AF-455E-94A8-E166B5BCD09D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB6B02C8-67AF-455E-94A8-E166B5BCD09D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B0CE850-FFFB-42D6-B1BB-FA5BD2D5F900}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B0CE850-FFFB-42D6-B1BB-FA5BD2D5F900}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B0CE850-FFFB-42D6-B1BB-FA5BD2D5F900}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B0CE850-FFFB-42D6-B1BB-FA5BD2D5F900}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3B0CE850-FFFB-42D6-B1BB-FA5BD2D5F900} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal
