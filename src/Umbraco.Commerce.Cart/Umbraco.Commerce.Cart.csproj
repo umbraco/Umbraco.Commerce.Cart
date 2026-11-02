@@ -19,6 +19,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <InternalsVisibleTo Include="Umbraco.Commerce.Cart.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Umbraco.Commerce.Cms" />
     </ItemGroup>
 

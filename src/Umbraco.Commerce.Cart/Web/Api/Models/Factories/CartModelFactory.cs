@@ -18,7 +18,7 @@ internal static class CartModelFactory
             Id = entity.Id,
             Items = await entity.OrderLines.SelectAsync(async x =>
             {
-                var ol = await ItemEntityToDtoAsync(ctx, x, new BundlableCartItemDto());
+                var ol = await ItemEntityToDtoAsync(ctx, x, entity.LanguageIsoCode, new BundlableCartItemDto());
 
                 if (x.IsBundle(out var bundleOrderLineReadOnly))
                 {
@@ -26,7 +26,7 @@ internal static class CartModelFactory
                     
                     ol.BundleReference = bundleOrderLineReadOnly.BundleId;
                     ol.Items = await bundleOrderLineReadOnly.OrderLines
-                        .SelectAsync(async y => await ItemEntityToDtoAsync(ctx, y, new CartItemDto()));
+                        .SelectAsync(async y => await ItemEntityToDtoAsync(ctx, y, entity.LanguageIsoCode, new CartItemDto()));
                     ol.BasePrice = new FormattedPriceDto
                     {
                         WithTax = basePrice.WithTax,
@@ -46,7 +46,7 @@ internal static class CartModelFactory
         };
     }
     
-    private static async Task<T> ItemEntityToDtoAsync<T>(MappingContext ctx, OrderLineReadOnly entity, T dto)
+    private static async Task<T> ItemEntityToDtoAsync<T>(MappingContext ctx, OrderLineReadOnly entity, string languageIsoCode, T dto)
         where T : CartItemDto
     {
         var unitPrice = await entity.UnitPrice.WithoutAdjustments.FormattedAsync();
@@ -74,7 +74,7 @@ internal static class CartModelFactory
             .ToDictionary(y => y.Key, y => y.Value.Value);
         dto.Attributes = entity.Attributes.ToDictionary(y => y.Name.Name, y => y.Value.Name);
         
-        var product = await ctx.UmbracoCommerceApi.GetProductAsync(entity.StoreId, entity.ProductReference, entity.ProductVariantReference);
+        var product = await ctx.UmbracoCommerceApi.GetProductAsync(entity.StoreId, entity.ProductReference, entity.ProductVariantReference, languageIsoCode);
         if (product is IProductSnapshotWithImage productWithImage)
         {
             dto.ImageUrl = productWithImage.ImageUrl;

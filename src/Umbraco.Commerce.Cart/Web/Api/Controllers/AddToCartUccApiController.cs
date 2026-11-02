@@ -34,9 +34,7 @@ public class AddToCartUccApiController(IUmbracoCommerceApi umbracoCommerceApi) :
             await umbracoCommerceApi.Uow.ExecuteAsync(async uow =>
             {
                 // If we have bundle items, enforce a bundle reference
-                var bundleReference = model.BundleItems is { Count: > 0 } 
-                    ? model.BundleReference ?? Guid.NewGuid().ToString() 
-                    : model.BundleReference;
+                var bundleReference = ResolveBundleReference(model);
                 
                 var order = await umbracoCommerceApi.GetOrCreateCurrentOrderAsync(store.Id)!
                     .AsWritableAsync(uow)
@@ -71,4 +69,9 @@ public class AddToCartUccApiController(IUmbracoCommerceApi umbracoCommerceApi) :
         
         return Ok(null);
     }
+
+    internal static string? ResolveBundleReference(AddToCartRequestDto model)
+        => model.BundleItems is { Count: > 0 }
+            ? model.BundleReference ?? Guid.NewGuid().ToString()
+            : model.BundleReference;
 }
